@@ -14,6 +14,10 @@
  */
 typedef struct kronkpool_threadpool_s kpThreadPool;
 
-KP_API kpThreadPool *kpThreadPool_create(ssize_t concurrency);
+// TODO: Documentation
+KP_API kpThreadPool* kpThreadPool_create(ssize_t concurrency);
+
+// TODO: Documentation
+KP_API void kpThreadPool_destroy(kpThreadPool* pool);
 
 #endif /* KRONKPOOL_H */
