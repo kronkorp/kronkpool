@@ -1,42 +1,15 @@
 #include "kronkpool/macros/optimization.h"
+#include "kronkpool/macros/types.h"
 #include "pool.h"
+#include <pthread.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <time.h>
-#include <bits/pthreadtypes.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-static void *__routine(
-    void *arg
-)
-{
-    kpThreadPool *pool = (kpThreadPool *)arg;
-
-    if (!pool) {
-        return NULL;
-    }
-    while (true) {
-        // kfThreadTask *task;
-        // void *d;
-        // pthread_mutex_lock(&pool->mutex);
-        // while (!pool->stop && queue_empty(&pool->queue)) {
-        //     pthread_cond_wait(&pool->cond, &pool->mutex);
-        // }
-        // // FIXME: Queue empty really necessary ??
-        // if (pool->stop && queue_empty(&pool->queue)) {
-        //     return NULL;
-        // }
-        // task = queue_front(&pool->queue);
-        // queue_pop(&pool->queue);
-        // pool->pendings--;
-        // pthread_mutex_unlock(&pool->mutex);
-        // pool->runnings++;
-        // // NOTE: Should call task... with ctx
-        // task->handler(task->data);
-        // pool->runnings--;
-    }
-}
+#include <bits/pthreadtypes.h>
+#include "queue/queue.h"
 
 static int kfThreadPool_init(
     kpThreadPool *pool,
@@ -52,18 +25,17 @@ static int kfThreadPool_init(
     if (pthread_cond_init(&pool->cond, NULL) != 0) {
         return -1;
     }
-    // queue_init(&pool->queue);
+    queue_init(&pool->queue);
     pool->pendings = 0;
     pool->runnings = 0;
-    // pool->ctx = ctx;
     pool->workers = nthreads;
     pool->stop = kpFalse;
     pool->threads = calloc(nthreads, sizeof(pthread_t));
     if (!pool->threads) {
         return -1;
     }
-    for (size_t i = 0; i < nthreads; ++i) {
-        pthread_create(&pool->threads[i], NULL, &__routine, pool);
+    for (size_t i = 0; i < pool->workers; ++i) {
+        pthread_create(&pool->threads[i], NULL, &kpThreadPool_routine, pool);
     }
     return 0;
 }
