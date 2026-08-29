@@ -9,6 +9,7 @@
     #include <stdbool.h>
     #include <stdlib.h>
 
+// TODO: Documentation !!!
 typedef struct queue_node_s {
 
     void *data;
