@@ -11,3 +11,4 @@ a.out
 
 # Compilation
 compile_commands.json
+.cache
