@@ -1,39 +1,50 @@
 # Kronkpool
 
-*Kronkpool* is a simple threadpool written in C, using custom queue implementation and **pthread**.
+Kronkpool is a simple thread pool written in C, using a custom queue implementation and `pthread`.
 
 ## Features
 
-- **Multithreading**: Split tasks between differents *workers* (threads).
+- Multithreading: split tasks between workers.
+- Queue-based task scheduling.
+- Shared and static library builds.
+- Optional unit tests from the root CMake project.
 
-## Installation
+## Build
 
-### Using CMake
-
-```bash
-mkdir build
-cd build/
-cmake ..
-make
-```
-
-This will generate `libkronkpool.a` and `libkronkpool.so`. You can now install with
+Kronkpool uses CMake.
 
 ```bash
-sudo make install
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
 ```
+
+This generates `libkronkpool.a` and `libkronkpool.so` in `build/`.
+
+```bash
+cmake --install build
+```
+
+### Unit Tests
+
+Unit tests are enabled by default from the top-level CMake file.
+
+```bash
+cmake -S . -B build -DKRONKPOOL_BUILD_TESTS=ON
+cmake --build build -j
+ctest --test-dir build
+```
+
+To skip test targets, configure with `-DKRONKPOOL_BUILD_TESTS=OFF`.
 
 ## Quick Start
 
-Here is a simple example of how to use Kronkflow:
+Here is a simple example of how to use Kronkpool:
 
 ```c
 #include <pthread.h>
 #include <kronkpool/kronkpool.h>
 #include <stdio.h>
-#include <unistd.h>
 
-// Your task handler
 static void *my_task(void *arg)
 {
     printf("Task executed in thread [%zu] with arg [%p]\n", pthread_self(), arg);
@@ -42,19 +53,23 @@ static void *my_task(void *arg)
 
 int main(void)
 {
-    // Create a threadpool with [HARDWARE_CONCURRENCY] workers
     kpThreadPool *p = kpThreadPool_create(-1);
 
-    // Get the number of workers
     printf("Threadpool has %zu workers\n", kpThreadPool_getWorkers(p));
 
-    // Push a task
     kpThreadPool_pushTask(p, &my_task, (void *)10);
 
-    // Destroy the pool
     kpThreadPool_destroy(p);
+    return 0;
 }
 ```
+
+## Public API
+
+- `kpThreadPool_create(ssize_t concurrency)` creates a pool.
+- `kpThreadPool_destroy(kpThreadPool *pool)` stops workers and releases resources.
+- `kpThreadPool_pushTask(kpThreadPool *pool, void *(*task)(void *), void *data)` queues a task.
+- `kpThreadPool_getWorkers(kpThreadPool *pool)` returns the configured worker count.
 
 ## License
 
