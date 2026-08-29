@@ -26,4 +26,7 @@ KP_API void kpThreadPool_destroy(kpThreadPool* pool);
 // TODO: Documentation
 KP_API int kpThreadPool_pushTask(kpThreadPool *pool, void *(*task)(void *), void *data);
 
+// TODO: Documentation
+KP_API size_t kpThreadPool_getWorkers(kpThreadPool * p);
+
 #endif /* KRONKPOOL_H */

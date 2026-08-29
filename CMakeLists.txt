@@ -5,9 +5,21 @@ include(cmake/ProjectOptions.cmake)
 include(cmake/CompilerOptions.cmake)
 include(cmake/Utils.cmake)
 
+option(KRONKPOOL_BUILD_TESTS "Build kronkpool tests" ON)
+
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     message(FATAL_ERROR "Les builds dans le dossier source sont interdits. Créez un dossier de build (ex: 'build/').")
 endif()
+
+include(FetchContent)
+
+FetchContent_Declare(
+    kronklab
+    GIT_REPOSITORY https://github.com/kronkorp/kronklab
+    GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(kronklab)
 
 file(GLOB_RECURSE KRONKPOOL_SOURCES 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
@@ -64,3 +76,8 @@ install(TARGETS kronkpool-static kronkpool-shared
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/kronkpool
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+
+if(KRONKPOOL_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests/units)
+endif()
