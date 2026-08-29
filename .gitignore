@@ -1,0 +1,8 @@
+# IDE Folders
+.vscode
+
+# Build
+build
+
+# Binarys
+a.out
