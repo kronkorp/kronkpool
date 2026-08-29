@@ -1,8 +1,10 @@
 # IDE Folders
 .vscode
 
-# Build
-build
+# Build folders
+build/
+Debug/
+Release/
 
 # Binarys
 a.out
