@@ -4,11 +4,11 @@
 
 KP_API
 size_t kpThreadPool_getWorkers(
-    kpThreadPool * p
+    kpThreadPool * pool
 )
 {
-    if (!p) {
+    if (!pool) {
         return 0;
     }
-    return p->workers;
+    return pool->workers;
 }
