@@ -1,19 +1,23 @@
-add_library(project_options INTERFACE)
+# NOTE: When kronkpool is built as a dependency of a project that already
+# defines "project_options" (kronkflow, KUGE...), reuse that one.
+if(NOT TARGET project_options)
+    add_library(project_options INTERFACE)
 
-target_compile_options(project_options INTERFACE
-    ${PROJECT_WARNINGS}
-    $<$<CONFIG:Debug>:${PROJECT_DEBUG_FLAGS}>
-    $<$<CONFIG:Release>:${PROJECT_RELEASE_FLAGS}>
-)
+    target_compile_options(project_options INTERFACE
+        ${PROJECT_WARNINGS}
+        $<$<CONFIG:Debug>:${PROJECT_DEBUG_FLAGS}>
+        $<$<CONFIG:Release>:${PROJECT_RELEASE_FLAGS}>
+    )
 
-target_link_libraries(project_options INTERFACE
-    stdc++exp
-)
+    target_link_libraries(project_options INTERFACE
+        stdc++exp
+    )
 
-target_link_options(project_options INTERFACE
-    -rdynamic
-)
+    target_link_options(project_options INTERFACE
+        -rdynamic
+    )
 
-target_compile_definitions(project_options INTERFACE
-    $<$<CONFIG:Debug>:_DEBUG>
-)
+    target_compile_definitions(project_options INTERFACE
+        $<$<CONFIG:Debug>:_DEBUG>
+    )
+endif()
