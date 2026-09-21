@@ -35,14 +35,21 @@ void *kpThreadPool_routine(
             task = queue_front(&pool->queue);
             // TODO: Check if good before pop
             queue_pop(&pool->queue);
+            // NOTE: Both changed under the same lock, so that a task is
+            // always counted as pending or running (see kpThreadPool_waitIdle)
             pool->pendings--;
+            pool->runnings++;
             pthread_mutex_unlock(&pool->mutex);
         }
-        pool->runnings++;
         // NOTE: Should call task... with ctx
         task->handler(task->data);
         free(task);
+        pthread_mutex_lock(&pool->mutex);
         pool->runnings--;
+        if (pool->pendings == 0 && pool->runnings == 0) {
+            pthread_cond_broadcast(&pool->idle);
+        }
+        pthread_mutex_unlock(&pool->mutex);
     }
     return NULL;
 }

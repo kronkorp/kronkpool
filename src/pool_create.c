@@ -25,6 +25,9 @@ static int kfThreadPool_init(
     if (pthread_cond_init(&pool->cond, NULL) != 0) {
         return -1;
     }
+    if (pthread_cond_init(&pool->idle, NULL) != 0) {
+        return -1;
+    }
     queue_init(&pool->queue);
     pool->pendings = 0;
     pool->runnings = 0;

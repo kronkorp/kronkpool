@@ -56,6 +56,23 @@ KP_API int kpThreadPool_pushTask(kpThreadPool *pool, void *(*task)(void *), void
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
+ * @brief  Wait until every pushed task has been executed
+ *
+ * Returns once no task is pending nor running, including the tasks that
+ * running tasks pushed in the meantime. The pool stays usable afterwards.
+ *
+ * @warning  Do not call it from a task of the same pool: that task would wait
+ *           for itself.
+ *
+ * @param pool  The thread pool (nothing is done if NULL)
+ */
+///////////////////////////////////////////////////////////////////////////////
+KP_API void kpThreadPool_waitIdle(kpThreadPool *pool);
+///////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////////////
+/**
  * @brief  Get the number of workers in the thread pool
  *
  * @param pool  The thread pool
