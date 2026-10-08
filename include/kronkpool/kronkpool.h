@@ -7,7 +7,7 @@
 #ifndef KRONKPOOL_H
     #define KRONKPOOL_H
     #include "kronkpool/macros/optimization.h"
-    #include <sys/types.h>    
+    #include "kronkpool/macros/types.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
