@@ -7,8 +7,8 @@
 #ifndef KRONKPOOL_PRIVATE_H
     #define KRONKPOOL_PRIVATE_H
     #include <stdatomic.h>
-    #include <pthread.h>
     #include <kronkpool/macros/types.h>
+    #include "platform/thread.h"
     #include "queue/queue.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,10 +48,10 @@ typedef struct kronkpool_threadpool_s {
     atomic_size_t   pendings;  //!< The number of task pendings
     atomic_size_t   runnings;  //!< The number of tasks being executed (changed with mutex held)
     atomic_size_t   workers;   //!< The number of threads
-    pthread_t*      threads;   //!< The threads (array)
-    pthread_cond_t  cond;      //!< The conditionnal variable
-    pthread_cond_t  idle;      //!< Signaled (with mutex held) when nothing is pending nor running
-    pthread_mutex_t mutex;     //!< Mutex
+    kpThread*       threads;   //!< The threads (array)
+    kpCond          cond;      //!< The conditionnal variable
+    kpCond          idle;      //!< Signaled (with mutex held) when nothing is pending nor running
+    kpMutex         mutex;     //!< Mutex
     atomic_bool     stop;      //!< Does the pool should stop
     // FIXME: Maybe check for a better queue implementation
     queue_t         queue;     //!< Queue (implementation in "src/queue/")

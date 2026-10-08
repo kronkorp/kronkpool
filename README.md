@@ -1,12 +1,14 @@
 # Kronkpool
 
-Kronkpool is a simple thread pool written in C, using a custom queue implementation and `pthread`.
+Kronkpool is a simple thread pool written in C, using a custom queue implementation and `pthread` (Win32 threads on
+Windows).
 
 ## Features
 
 - Multithreading: split tasks between workers.
 - Queue-based task scheduling.
 - Shared and static library builds.
+- Linux and Windows (MSVC, MinGW).
 - Optional unit tests from the root CMake project.
 
 ## Build
@@ -20,13 +22,20 @@ cmake --build build -j
 
 This generates `libkronkpool.a` and `libkronkpool.so` in `build/`.
 
+On Windows, the same commands work with MSVC (Visual Studio 2022 17.5 or later, for `<stdatomic.h>`), with
+`--config Release` to build. They give `kronkpool_static.lib`, and `kronkpool.dll` with its import library
+`kronkpool.lib`. MinGW gives `libkronkpool.a` and `libkronkpool.dll`.
+
 ```bash
 cmake --install build
 ```
 
 ### Unit Tests
 
-Unit tests are enabled by default from the top-level CMake file.
+Unit tests are enabled by default from the top-level CMake file. A smoke test (`tests/smoke/`) runs on every
+platform, against the static and the shared library. The unit tests (`tests/units/`) use
+[kronklab](https://github.com/kronkorp/kronklab), pinned to a commit, which runs each test in a `fork()`: they are not
+built on Windows.
 
 ```bash
 cmake -S . -B build -DKRONKPOOL_BUILD_TESTS=ON
