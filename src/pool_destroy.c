@@ -2,7 +2,6 @@
 #include "pool.h"
 #include "kronkpool/kronkpool.h"
 #include "queue/queue.h"
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -11,18 +10,18 @@ static void kpThreadPool_clear(
 )
 {
     // NOTE: stop is set and broadcast with the mutex held. Without it, a worker
-    // that already checked stop but is not in pthread_cond_wait yet misses the
-    // broadcast and sleeps forever (pthread_join below would never return).
-    pthread_mutex_lock(&pool->mutex);
+    // that already checked stop but is not in kpCond_wait yet misses the
+    // broadcast and sleeps forever (kpThread_join below would never return).
+    kpMutex_lock(&pool->mutex);
     pool->stop = true;
-    pthread_cond_broadcast(&pool->cond);
-    pthread_mutex_unlock(&pool->mutex);
+    kpCond_broadcast(&pool->cond);
+    kpMutex_unlock(&pool->mutex);
     for (size_t i = 0; i < pool->workers; ++i) {
-        pthread_join(pool->threads[i], NULL);
+        kpThread_join(pool->threads[i]);
     }
-    pthread_mutex_destroy(&pool->mutex);
-    pthread_cond_destroy(&pool->cond);
-    pthread_cond_destroy(&pool->idle);
+    kpMutex_destroy(&pool->mutex);
+    kpCond_destroy(&pool->cond);
+    kpCond_destroy(&pool->idle);
     queue_clear(&pool->queue, NULL);
     free(pool->threads);
 }

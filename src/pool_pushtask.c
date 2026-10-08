@@ -22,10 +22,10 @@ int kpThreadPool_pushTask(
     }
     p->data = data;
     p->handler = task;
-    pthread_mutex_lock(&pool->mutex);
+    kpMutex_lock(&pool->mutex);
     queue_push(&pool->queue, p);
     ++pool->pendings;
-    pthread_cond_signal(&pool->cond);
-    pthread_mutex_unlock(&pool->mutex);
+    kpCond_signal(&pool->cond);
+    kpMutex_unlock(&pool->mutex);
     return 0;
 }
